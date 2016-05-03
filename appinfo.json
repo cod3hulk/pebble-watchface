@@ -14,6 +14,12 @@
     "dummy": 0
   },
   "resources": {
-    "media": []
+    "media": [
+        {
+            "type": "font",
+            "name": "PERFECT_DOS_44",
+            "file": "fonts/perfect-dos-vga.ttf"
+        }
+    ]
   }
 }
