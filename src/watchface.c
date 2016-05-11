@@ -58,8 +58,13 @@ static void main_window_load(Window *window) {
 }
 
 static void main_window_unload(Window *window) {
+    // destory time elements
     text_layer_destroy(s_time_layer);
     fonts_unload_custom_font(s_time_font);
+
+    // destroy weather elements
+    text_layer_destroy(s_weather_layer);
+    fonts_unload_custom_font(s_weather_font);
 }
 
 static void init() {
