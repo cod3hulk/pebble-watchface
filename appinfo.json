@@ -1,25 +1,31 @@
 {
-  "uuid": "0c4da6a7-89ba-4a55-a2ed-74b1b95af6b5",
-  "shortName": "watchface",
-  "longName": "watchface",
-  "companyName": "MakeAwesomeHappen",
-  "versionLabel": "1.0",
-  "sdkVersion": "3",
-  "targetPlatforms": ["aplite", "basalt", "chalk"],
-  "enableMultiJS": true,
-  "watchapp": {
-    "watchface": true
-  },
-  "appKeys": {
-    "dummy": 0
-  },
-  "resources": {
-    "media": [
-        {
-            "type": "font",
-            "name": "PERFECT_DOS_44",
-            "file": "fonts/perfect-dos-vga.ttf"
-        }
-    ]
-  }
+    "uuid": "0c4da6a7-89ba-4a55-a2ed-74b1b95af6b5",
+    "shortName": "watchface",
+    "longName": "watchface",
+    "companyName": "MakeAwesomeHappen",
+    "versionLabel": "1.0",
+    "sdkVersion": "3",
+    "targetPlatforms": ["aplite", "basalt", "chalk"],
+    "enableMultiJS": true,
+    "watchapp": {
+        "watchface": true
+    },
+    "appKeys": {
+        "dummy": 0
+    },
+    "resources": {
+        "media": [
+            {
+                "type": "font",
+                "name": "PERFECT_DOS_44",
+                "file": "fonts/perfect-dos-vga.ttf"
+            },
+            {
+                "type": "font",
+                "name": "PERFECT_DOS_20",
+                "file": "fonts/perfect-dos-vga.ttf"
+            }
+
+        ]
+    }
 }

@@ -1,8 +1,13 @@
 #include <pebble.h>
 
+// windows
 static Window *s_main_window;
+// text layers
 static TextLayer *s_time_layer;
+static TextLayer *s_weather_layer;
+// fonts
 static GFont s_time_font;
+static GFont s_weather_font;
 
 static void update_time() {
     time_t temp = time(NULL);
@@ -23,6 +28,7 @@ static void main_window_load(Window *window) {
     Layer *window_layer = window_get_root_layer(window);
     GRect bounds = layer_get_bounds(window_layer);
 
+    // time text layer
     s_time_layer = text_layer_create(
         GRect(0, PBL_IF_ROUND_ELSE(58, 52), bounds.size.w, 50)
     );
@@ -35,6 +41,20 @@ static void main_window_load(Window *window) {
     text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
 
     layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
+
+    // weather text layer
+    s_weather_layer = text_layer_create(
+        GRect(0, PBL_IF_ROUND_ELSE(125, 120), bounds.size.w, 25)
+    );
+    text_layer_set_background_color(s_weather_layer, GColorClear);
+    text_layer_set_text_color(s_weather_layer, GColorBlack);
+    text_layer_set_text_alignment(s_weather_layer, GTextAlignmentCenter);
+    text_layer_set_text(s_weather_layer, "Loading...");
+
+    s_weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_PERFECT_DOS_20));
+    text_layer_set_font(s_time_layer, s_time_font);
+
+    layer_add_child(window_layer, text_layer_get_layer(s_weather_layer));
 }
 
 static void main_window_unload(Window *window) {
