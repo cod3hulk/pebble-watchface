@@ -27,5 +27,6 @@
             }
 
         ]
-    }
+    },
+    "capabilities": [ "location" ]
 }
