@@ -30,15 +30,15 @@ static void update_time() {
 static void update_weather(struct tm *tick_time) {
     // Get weather update every 15 minutes
     if(tick_time->tm_min % 15 == 0) {
-      // Begin dictionary
-      DictionaryIterator *iter;
-      app_message_outbox_begin(&iter);
+        // Begin dictionary
+        DictionaryIterator *iter;
+        app_message_outbox_begin(&iter);
 
-      // Add a key-value pair
-      dict_write_uint8(iter, 0, 0);
+        // Add a key-value pair
+        dict_write_uint8(iter, 0, 0);
 
-      // Send the message!
-      app_message_outbox_send();
+        // Send the message!
+        app_message_outbox_send();
     }
 }
 
@@ -53,11 +53,11 @@ static void main_window_load(Window *window) {
 
     // time text layer
     s_time_layer = text_layer_create(
-        GRect(0, PBL_IF_ROUND_ELSE(58, 52), bounds.size.w, 50)
-    );
+            GRect(0, PBL_IF_ROUND_ELSE(58, 52), bounds.size.w, 50)
+            );
 
     text_layer_set_background_color(s_time_layer, GColorClear);
-    text_layer_set_text_color(s_time_layer, GColorBlack);
+    text_layer_set_text_color(s_time_layer, GColorWhite);
     text_layer_set_text(s_time_layer, "00:00");
     s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_PERFECT_DOS_44));
     text_layer_set_font(s_time_layer, s_time_font);
@@ -67,10 +67,10 @@ static void main_window_load(Window *window) {
 
     // weather text layer
     s_weather_layer = text_layer_create(
-        GRect(0, PBL_IF_ROUND_ELSE(125, 120), bounds.size.w, 25)
-    );
+            GRect(0, PBL_IF_ROUND_ELSE(125, 120), bounds.size.w, 25)
+            );
     text_layer_set_background_color(s_weather_layer, GColorClear);
-    text_layer_set_text_color(s_weather_layer, GColorBlack);
+    text_layer_set_text_color(s_weather_layer, GColorWhite);
     text_layer_set_text_alignment(s_weather_layer, GTextAlignmentCenter);
     text_layer_set_text(s_weather_layer, "Loading...");
 
@@ -92,18 +92,18 @@ static void main_window_unload(Window *window) {
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
     // Read tuples for data
-	Tuple *temp_tuple = dict_find(iterator, KEY_TEMPERATURE);
-	Tuple *conditions_tuple = dict_find(iterator, KEY_CONDITIONS);
+    Tuple *temp_tuple = dict_find(iterator, KEY_TEMPERATURE);
+    Tuple *conditions_tuple = dict_find(iterator, KEY_CONDITIONS);
 
-	// If all data is available, use it
-	if(temp_tuple && conditions_tuple) {
-	  snprintf(temperature_buffer, sizeof(temperature_buffer), "%dC", (int)temp_tuple->value->int32);
-	  snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", conditions_tuple->value->cstring);
-	}
+    // If all data is available, use it
+    if(temp_tuple && conditions_tuple) {
+        snprintf(temperature_buffer, sizeof(temperature_buffer), "%dC", (int)temp_tuple->value->int32);
+        snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", conditions_tuple->value->cstring);
+    }
 
-	// Assemble full string and display
-	snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s, %s", temperature_buffer, conditions_buffer);
-	text_layer_set_text(s_weather_layer, weather_layer_buffer);
+    // Assemble full string and display
+    snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s, %s", temperature_buffer, conditions_buffer);
+    text_layer_set_text(s_weather_layer, weather_layer_buffer);
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -120,11 +120,12 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 
 static void init() {
     s_main_window = window_create();
+    window_set_background_color(s_main_window, GColorRed);
 
     window_set_window_handlers(s_main_window, (WindowHandlers) {
-        .load = main_window_load,
-        .unload = main_window_unload
-    });
+            .load = main_window_load,
+            .unload = main_window_unload
+            });
 
     window_stack_push(s_main_window, true);
 

@@ -1,4 +1,3 @@
-
 Pebble.addEventListener('appmessage',
     function (e) {
       console.log('AppMessage received!');
@@ -24,7 +23,7 @@ var xhrRequest = function (url, type, callback) {
 
 function locationSuccess(pos) {
   console.log('locationSuccess called!');
-  var myAPIKey = '';
+  var myAPIKey = localStorage.getItem('API_KEY');
   var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' +
     pos.coords.latitude + '&lon=' + pos.coords.longitude + '&appid=' + myAPIKey;
 
