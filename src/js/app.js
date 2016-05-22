@@ -1,4 +1,11 @@
 
+Pebble.addEventListener('appmessage',
+    function (e) {
+      console.log('AppMessage received!');
+      getWeather();
+    }
+);
+
 // Listen for when the watchface is opened
 Pebble.addEventListener('ready',
     function (e) {
@@ -34,6 +41,21 @@ function locationSuccess(pos) {
       // Conditions
       var conditions = json.weather[0].main;      
       console.log('Conditions are ' + conditions);
+
+      var dictionary = {
+		'KEY_TEMPERATURE': temperature,
+		'KEY_CONDITIONS': conditions
+	  };
+
+	  Pebble.sendAppMessage(dictionary,
+		  function (e) {
+			console.log('Weather info sent to Pebble succesfully!')
+		  },
+		  function (e) {
+			console.log('Error sending weather info to Pebble!')
+		  }
+	  );
+
     }      
   );
 }
