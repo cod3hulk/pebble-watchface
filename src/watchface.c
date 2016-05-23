@@ -3,13 +3,15 @@
 #define KEY_TEMPERATURE 0
 #define KEY_CONDITIONS 1
 
-// windows
+// window
 static Window *s_main_window;
 // text layers
 static TextLayer *s_time_layer;
+static TextLayer *s_date_layer;
 static TextLayer *s_weather_layer;
 // fonts
 static GFont s_time_font;
+static GFont s_date_font;
 static GFont s_weather_font;
 // weather data
 static char temperature_buffer[8];
@@ -25,6 +27,13 @@ static void update_time() {
             "%H:%M" : "%I:%M", tick_time);
 
     text_layer_set_text(s_time_layer, s_buffer);
+
+    // Copy date into buffer from tm structure
+    static char date_buffer[16];
+    strftime(date_buffer, sizeof(date_buffer), "%a %d.%m", tick_time);
+
+    // Show the date
+    text_layer_set_text(s_date_layer, date_buffer);
 }
 
 static void update_weather(struct tm *tick_time) {
@@ -69,7 +78,7 @@ static void main_window_load(Window *window) {
     s_weather_layer = text_layer_create(
             GRect(0, PBL_IF_ROUND_ELSE(125, 120), bounds.size.w, 25)
             );
-    text_layer_set_background_color(s_weather_layer, GColorClear);
+    text_layer_set_background_color(s_weather_layer, GColorRed);
     text_layer_set_text_color(s_weather_layer, GColorWhite);
     text_layer_set_text_alignment(s_weather_layer, GTextAlignmentCenter);
     text_layer_set_text(s_weather_layer, "Loading...");
@@ -78,12 +87,29 @@ static void main_window_load(Window *window) {
     text_layer_set_font(s_time_layer, s_time_font);
 
     layer_add_child(window_layer, text_layer_get_layer(s_weather_layer));
+
+    // date text layer
+    s_date_layer = text_layer_create(
+            GRect(0, PBL_IF_ROUND_ELSE(25, 20), bounds.size.w, 25)
+            );
+    text_layer_set_background_color(s_date_layer, GColorClear);
+    text_layer_set_text_color(s_date_layer, GColorWhite);
+    text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
+    text_layer_set_text(s_date_layer, "Mon 01.01");
+
+    s_date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_PERFECT_DOS_20));
+    text_layer_set_font(s_time_layer, s_time_font);
+
+    layer_add_child(window_layer, text_layer_get_layer(s_date_layer));
 }
 
 static void main_window_unload(Window *window) {
     // destory time elements
     text_layer_destroy(s_time_layer);
     fonts_unload_custom_font(s_time_font);
+
+    text_layer_destroy(s_date_layer);
+    fonts_unload_custom_font(s_date_font);
 
     // destroy weather elements
     text_layer_destroy(s_weather_layer);
