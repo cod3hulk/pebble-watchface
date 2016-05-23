@@ -17,6 +17,16 @@ static GFont s_weather_font;
 static char temperature_buffer[8];
 static char conditions_buffer[32];
 static char weather_layer_buffer[32];
+// battery
+static int s_battery_level;
+static Layer *s_battery_layer;
+
+static void battery_callback(BatteryChargeState state) {
+    s_battery_level = state.charge_percent;
+
+    // update meter
+    layer_mark_dirty(s_battery_layer);
+}
 
 static void update_time() {
     time_t temp = time(NULL);
@@ -55,6 +65,22 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     update_time();
     update_weather(tick_time);
 }
+
+static void battery_update_proc(Layer *layer, GContext *ctx) {
+    GRect bounds = layer_get_bounds(layer);
+
+    // Find the width of the bar
+    int width = (int)(float)(((float)s_battery_level / 100.0F) * 150.0F);
+
+    // Draw the background
+    graphics_context_set_fill_color(ctx, GColorClear);
+    graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+
+    // Draw the bar
+    graphics_context_set_fill_color(ctx, GColorWhite);
+    graphics_fill_rect(ctx, GRect(0, 0, width, bounds.size.h), 0, GCornerNone);
+}
+
 
 static void main_window_load(Window *window) {
     Layer *window_layer = window_get_root_layer(window);
@@ -101,6 +127,11 @@ static void main_window_load(Window *window) {
     text_layer_set_font(s_time_layer, s_time_font);
 
     layer_add_child(window_layer, text_layer_get_layer(s_date_layer));
+
+    // battery layer
+    s_battery_layer = layer_create(GRect(14, 54, 115, 2));
+    layer_set_update_proc(s_battery_layer, battery_update_proc);
+    layer_add_child(window_get_root_layer(window), s_battery_layer);
 }
 
 static void main_window_unload(Window *window) {
@@ -114,6 +145,9 @@ static void main_window_unload(Window *window) {
     // destroy weather elements
     text_layer_destroy(s_weather_layer);
     fonts_unload_custom_font(s_weather_font);
+
+    // destroy battery elements
+    layer_destroy(s_battery_layer);
 }
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
@@ -164,6 +198,10 @@ static void init() {
     app_message_register_inbox_dropped(inbox_dropped_callback);
     app_message_register_outbox_failed(outbox_failed_callback);
     app_message_register_outbox_sent(outbox_sent_callback);
+
+    // register for battery level updated
+    battery_state_service_subscribe(battery_callback);
+    battery_callback(battery_state_service_peek());
 
     // Open AppMessage
     const int inbox_size = 128;
